@@ -1,5 +1,6 @@
 package com.sparta.week5project.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,7 +37,23 @@ public class User {
     @JoinColumn(name = "user_id") // users 테이블에 food_id 컬럼
     private List<Comment> commentList = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(name = "postlike", // 중간 테이블 생성
+            joinColumns = @JoinColumn(name = "user_id"), // 현재 위치인 Food Entity 에서 중간 테이블로 조인할 컬럼 설정
+            inverseJoinColumns = @JoinColumn(name = "post_id")) // 반대 위치인 User Entity 에서 중간 테이블로 조인할 컬럼 설정
+    private List<Post> likePostList = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(name = "commentlike", // 중간 테이블 생성
+            joinColumns = @JoinColumn(name = "user_id"), // 현재 위치인 Food Entity 에서 중간 테이블로 조인할 컬럼 설정
+            inverseJoinColumns = @JoinColumn(name = "comment_id")) // 반대 위치인 User Entity 에서 중간 테이블로 조인할 컬럼 설정
+    private List<Comment> likeCommentList = new ArrayList<>();
+
+
+
+    public void addLikeCommentList(Comment comment) {
+        this.likeCommentList.add(comment); // 외래 키(연관 관계) 설정
+    }
 
 
 
