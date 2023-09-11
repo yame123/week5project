@@ -51,9 +51,9 @@ public class User {
 
 
 
-    public void addLikeCommentList(Comment comment) {
-        this.likeCommentList.add(comment); // 외래 키(연관 관계) 설정
-    }
+//    public void addLikeCommentList(Comment comment) {
+//        this.likeCommentList.add(comment); // 외래 키(연관 관계) 설정
+//    }
 
 
 

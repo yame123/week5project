@@ -30,7 +30,8 @@ public class Post extends Timestamped {
     @JoinColumn(name = "post_id") // users 테이블에 food_id 컬럼
     private List<Comment> commentList = new ArrayList<>();
 
-    //@ManyToMany
+    @ManyToMany(mappedBy = "likePostList")
+    private List<User> likeUserList = new ArrayList<>();
 
 
 
