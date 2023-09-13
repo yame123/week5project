@@ -8,6 +8,7 @@ import com.sparta.week5project.entity.User;
 import com.sparta.week5project.entity.UserRoleEnum;
 import com.sparta.week5project.repository.CommentRepository;
 import com.sparta.week5project.repository.PostRepository;
+import com.sparta.week5project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,10 +20,12 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
 
+    @Transactional
     public PostResponseDto posting(PostRequestDto postRequestDto,User user) {
         Post post = new Post(postRequestDto);
-
+        user = findUser(user.getId());
         post.setUsername(user.getUsername());
         user.getPostList().add(post);
 
@@ -67,22 +70,35 @@ public class PostService {
         return id;
     }
 
+    @Transactional
+    public PostResponseDto likePost(Long id, User user) {
+        Post post = findPost(id);
+        user = findUser(user.getId());
+        post.addLikePost(user);
+        return new PostResponseDto(post);
+    }
+
+
+
     private Post findPost(Long id) {
         return postRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("선택한 게시글은 존재하지 않습니다.")
         );
     }
 
-//    private User findUser(String username) {
-//        return userRepository.findByUsername(username).orElseThrow(() ->
-//                new IllegalArgumentException("유저 정보를 찾을 수 없습니다.")
-//        );
-//    }
-//
+
+
+    private User findUser(Long id) {
+        return userRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("유저 정보를 찾을 수 없습니다.")
+        );
+    }
+
 //    private String tokenToName (String tokenValue){
 //        String token = jwtUtil.substringToken(tokenValue);
 //        if (!jwtUtil.validateToken(token))
 //            throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
 //        return jwtUtil.getUserInfoFromToken(token).get("sub").toString();
 //    }
+
 }

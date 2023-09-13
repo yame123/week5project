@@ -15,7 +15,8 @@ public class PostResponseDto {
     private String username;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-    private List<Comment> commentList;
+    private List<CommentResponseDto> commentList;
+    private long like;
 
     public PostResponseDto(Post post) {
         this.id = post.getId();
@@ -24,7 +25,8 @@ public class PostResponseDto {
         this.username = post.getUsername();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
-        this.commentList = post.getCommentList();
+        this.commentList = post.getCommentList().stream().map(CommentResponseDto::new).toList();
+        this.like = post.getLikeUserList().size();
     }
 
 }

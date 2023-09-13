@@ -40,17 +40,19 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             if (!jwtUtil.validateToken(tokenValue)) {
                 log.error("Token Error");
-                return;
+                throw new ServletException("잘못된 토큰입니다.");
             }
-
+//throw new ServletException("잘못된 토큰입니다.");
             Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
 
             try {
                 setAuthentication(info.getSubject());
             } catch (Exception e) {
                 log.error(e.getMessage());
-                return;
+                throw new ServletException("잘못된 토큰입니다.");
             }
+        } else{
+            throw new ServletException("잘못된 토큰입니다.");
         }
 
         filterChain.doFilter(req, res);

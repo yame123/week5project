@@ -34,4 +34,13 @@ public class Comment extends Timestamped {
     public void update(CommentRequestDto requestDto) {
         this.contents = requestDto.getContents();
     }
+    public void addLikeComment(User user) {
+        if (this.likeUserList.contains(user)) {
+            this.likeUserList.remove(user);
+            user.getLikeCommentList().remove(this);
+        } else {
+            this.likeUserList.add(user);
+            user.getLikeCommentList().add(this);
+        }
+    }
 }

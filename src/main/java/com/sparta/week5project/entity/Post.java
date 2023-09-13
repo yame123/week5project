@@ -49,4 +49,14 @@ public class Post extends Timestamped {
     public void addComment(Comment comment) {
         this.commentList.add(comment);
     }
+
+    public void addLikePost(User user) {
+        if (this.likeUserList.contains(user)) {
+            this.likeUserList.remove(user);
+            user.getLikePostList().remove(this);
+        } else {
+            this.likeUserList.add(user);
+            user.getLikePostList().add(this);
+        }
+    }
 }

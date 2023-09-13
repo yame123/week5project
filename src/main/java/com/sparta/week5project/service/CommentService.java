@@ -2,12 +2,14 @@ package com.sparta.week5project.service;
 
 import com.sparta.week5project.dto.CommentRequestDto;
 import com.sparta.week5project.dto.CommentResponseDto;
+import com.sparta.week5project.dto.PostResponseDto;
 import com.sparta.week5project.entity.Comment;
 import com.sparta.week5project.entity.Post;
 import com.sparta.week5project.entity.User;
 import com.sparta.week5project.entity.UserRoleEnum;
 import com.sparta.week5project.repository.CommentRepository;
 import com.sparta.week5project.repository.PostRepository;
+import com.sparta.week5project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,9 +22,13 @@ import java.util.Comparator;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
+
+
     public CommentResponseDto createComment(CommentRequestDto requestDto, User user) {
 
         Comment comment = new Comment(requestDto);
+        user = findUser(user.getId());
         String username = user.getUsername();
         comment.setUsername(username);
 
@@ -36,9 +42,8 @@ public class CommentService {
             }
         };
 
-        Collections.sort(post.getCommentList(), compare);
-
         Comment saveComment = commentRepository.save(comment);
+        Collections.sort(post.getCommentList(), compare);
 
         CommentResponseDto commentResponseDto = new CommentResponseDto(saveComment);
         return commentResponseDto;
@@ -68,6 +73,14 @@ public class CommentService {
         return id;
     }
 
+    @Transactional
+    public CommentResponseDto likeComment(Long id, User user) {
+        Comment comment = findComment(id);
+        user = findUser(user.getId());
+        comment.addLikeComment(user);
+        return new CommentResponseDto(comment);
+    }
+
 //    private String tokenToName (String tokenValue){
 //        String token = jwtUtil.substringToken(tokenValue);
 //        if (!jwtUtil.validateToken(token))
@@ -86,9 +99,11 @@ public class CommentService {
         );
     }
 
-//    private User findUser(String username) {
-//        return userRepository.findByUsername(username).orElseThrow(() ->
-//                new IllegalArgumentException("유저 정보를 찾을 수 없습니다.")
-//        );
-//    }
+
+
+    private User findUser(Long id) {
+        return userRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("유저 정보를 찾을 수 없습니다.")
+        );
+    }
 }

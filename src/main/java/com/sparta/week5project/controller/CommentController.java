@@ -34,17 +34,11 @@ public class CommentController {
         return commentService.deleteComment(id, userDetails.getUser());
     }
 
-    @ExceptionHandler({IllegalArgumentException.class})
-    public ResponseEntity<RestApiException> handleException(IllegalArgumentException ex) {
-        RestApiException restApiException = new RestApiException(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
-        return new ResponseEntity<>(
-                // HTTP body
-                restApiException,
-                // HTTP status code
-                HttpStatus.BAD_REQUEST
-        );
-    }
+    @GetMapping("/comment/like/{id}")// 코멘트 좋아요
+    public CommentResponseDto likeComment(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
+        return commentService.likeComment(id,userDetails.getUser());
+    }
 
 }
 

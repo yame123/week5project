@@ -1,5 +1,6 @@
 package com.sparta.week5project.exception;
 
+import jakarta.servlet.ServletException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -33,6 +34,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<RestApiException> nullPointerExceptionHandler(NullPointerException ex) {
+        RestApiException message = new RestApiException(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ServletException.class)
+    public ResponseEntity<RestApiException> servletExceptionHandler(ServletException ex) {
         RestApiException message = new RestApiException(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
         return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
     }
