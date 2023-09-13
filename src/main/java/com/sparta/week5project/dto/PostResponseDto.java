@@ -26,7 +26,7 @@ public class PostResponseDto {
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
         this.commentList = post.getCommentList().stream().map(CommentResponseDto::new).toList();
-        this.like = post.getLikeUserList().size();
+        this.like = post.getPostLikeList().size();
     }
 
 }

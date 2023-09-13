@@ -3,10 +3,8 @@ package com.sparta.week5project.service;
 import com.sparta.week5project.dto.CommentRequestDto;
 import com.sparta.week5project.dto.CommentResponseDto;
 import com.sparta.week5project.dto.PostResponseDto;
-import com.sparta.week5project.entity.Comment;
-import com.sparta.week5project.entity.Post;
-import com.sparta.week5project.entity.User;
-import com.sparta.week5project.entity.UserRoleEnum;
+import com.sparta.week5project.entity.*;
+import com.sparta.week5project.repository.CommentLikeRepository;
 import com.sparta.week5project.repository.CommentRepository;
 import com.sparta.week5project.repository.PostRepository;
 import com.sparta.week5project.repository.UserRepository;
@@ -23,6 +21,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
 
     public CommentResponseDto createComment(CommentRequestDto requestDto, User user) {
@@ -31,10 +30,9 @@ public class CommentService {
         user = findUser(user.getId());
         String username = user.getUsername();
         comment.setUsername(username);
-
         Post post = findPost(requestDto.getPostid());
-        user.addComment(comment);
-        post.addComment(comment);
+        comment.setUser(user);
+        comment.setPost(post);
         Comparator<Comment> compare = new Comparator<Comment>() {
             @Override
             public int compare(Comment a, Comment b) {
@@ -76,10 +74,18 @@ public class CommentService {
     @Transactional
     public CommentResponseDto likeComment(Long id, User user) {
         Comment comment = findComment(id);
-        user = findUser(user.getId());
-        comment.addLikeComment(user);
+        CommentLike commentLike = new CommentLike(comment,user);
+        commentLikeRepository.save(commentLike);
         return new CommentResponseDto(comment);
     }
+
+//    @Transactional
+//    public CommentResponseDto likeComment(Long id, User user) {
+//        Comment comment = findComment(id);
+//        user = findUser(user.getId());
+//        comment.addLikeComment(user);
+//        return new CommentResponseDto(comment);
+//    }
 
 //    private String tokenToName (String tokenValue){
 //        String token = jwtUtil.substringToken(tokenValue);

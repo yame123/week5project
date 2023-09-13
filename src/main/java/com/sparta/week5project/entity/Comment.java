@@ -21,11 +21,20 @@ public class Comment extends Timestamped {
 
     @Column(name="contents",nullable = false, length = 127)
     private String contents;
+
     @Column(name="username",nullable = false)
     private String username;
 
-    @ManyToMany(mappedBy = "likeCommentList")
-    private List<User> likeUserList = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "post_id") // users 테이블에 food_id 컬럼
+    private Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id") // users 테이블에 food_id 컬럼
+    private User user;
+
+    @OneToMany(mappedBy = "commentLike",cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
+    private List<CommentLike> commentLikeList = new ArrayList<>();
 
     public Comment(CommentRequestDto requestDto) {
         this.contents = requestDto.getContents();
@@ -34,13 +43,5 @@ public class Comment extends Timestamped {
     public void update(CommentRequestDto requestDto) {
         this.contents = requestDto.getContents();
     }
-    public void addLikeComment(User user) {
-        if (this.likeUserList.contains(user)) {
-            this.likeUserList.remove(user);
-            user.getLikeCommentList().remove(this);
-        } else {
-            this.likeUserList.add(user);
-            user.getLikeCommentList().add(this);
-        }
-    }
+
 }

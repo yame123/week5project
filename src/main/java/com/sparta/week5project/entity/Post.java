@@ -26,12 +26,15 @@ public class Post extends Timestamped {
     @Column(name="username",nullable = false)
     private String username;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "post_id") // users 테이블에 food_id 컬럼
+    @OneToMany(mappedBy = "post",cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
     private List<Comment> commentList = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "likePostList")
-    private List<User> likeUserList = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "user_id") // users 테이블에 food_id 컬럼
+    private User user;
+
+    @OneToMany(mappedBy = "postLike",cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
+    private List<PostLike> PostLikeList = new ArrayList<>();
 
 
 
@@ -46,17 +49,6 @@ public class Post extends Timestamped {
         this.contents = postRequestDto.getContents();
     }
 
-    public void addComment(Comment comment) {
-        this.commentList.add(comment);
-    }
 
-    public void addLikePost(User user) {
-        if (this.likeUserList.contains(user)) {
-            this.likeUserList.remove(user);
-            user.getLikePostList().remove(this);
-        } else {
-            this.likeUserList.add(user);
-            user.getLikePostList().add(this);
-        }
-    }
+
 }

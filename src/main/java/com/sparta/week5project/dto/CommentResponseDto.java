@@ -20,6 +20,6 @@ public class CommentResponseDto {
         this.id = comment.getId();
         this.createdAt = comment.getCreatedAt();
         this.modifiedAt = comment.getModifiedAt();
-        this.like = comment.getLikeUserList().size();
+        this.like = comment.getCommentLikeList().size();
     }
 }

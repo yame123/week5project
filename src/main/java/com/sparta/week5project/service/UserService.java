@@ -1,12 +1,9 @@
 package com.sparta.week5project.service;
 
-import com.sparta.week5project.dto.LoginRequestDto;
 import com.sparta.week5project.dto.SignupRequestDto;
 import com.sparta.week5project.entity.User;
 import com.sparta.week5project.entity.UserRoleEnum;
-import com.sparta.week5project.jwt.JwtUtil;
 import com.sparta.week5project.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,7 +15,6 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
 
@@ -46,7 +42,6 @@ public class UserService {
     }
 
     public void signout(User user) {
-
         userRepository.delete(user);
     }
 

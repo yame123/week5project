@@ -2,11 +2,9 @@ package com.sparta.week5project.service;
 
 import com.sparta.week5project.dto.PostRequestDto;
 import com.sparta.week5project.dto.PostResponseDto;
-import com.sparta.week5project.entity.Comment;
-import com.sparta.week5project.entity.Post;
-import com.sparta.week5project.entity.User;
-import com.sparta.week5project.entity.UserRoleEnum;
+import com.sparta.week5project.entity.*;
 import com.sparta.week5project.repository.CommentRepository;
+import com.sparta.week5project.repository.PostLikeRepository;
 import com.sparta.week5project.repository.PostRepository;
 import com.sparta.week5project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +19,13 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final PostLikeRepository postLikeRepository;
 
     @Transactional
     public PostResponseDto posting(PostRequestDto postRequestDto,User user) {
         Post post = new Post(postRequestDto);
-        user = findUser(user.getId());
         post.setUsername(user.getUsername());
-        user.getPostList().add(post);
+        post.setUser(user);
 
         Post savePost = postRepository.save(post);
         PostResponseDto postResponseDto = new PostResponseDto(savePost);
@@ -60,9 +58,7 @@ public class PostService {
     public Long deletePost(Long id, User user) {
         Post post = findPost(id);
         String username = user.getUsername();
-        List<Comment> commentList = post.getCommentList();
         if (username.equals(post.getUsername())||user.getRole()== UserRoleEnum.ADMIN) {
-            commentRepository.deleteAll(commentList);
             postRepository.delete(post);
         } else {
             throw new IllegalArgumentException("작성자만 삭제할 수 있습니다.");
@@ -73,20 +69,16 @@ public class PostService {
     @Transactional
     public PostResponseDto likePost(Long id, User user) {
         Post post = findPost(id);
-        user = findUser(user.getId());
-        post.addLikePost(user);
+        PostLike postLike = new PostLike(post,user);
+        postLikeRepository.save(postLike);
         return new PostResponseDto(post);
     }
-
-
 
     private Post findPost(Long id) {
         return postRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("선택한 게시글은 존재하지 않습니다.")
         );
     }
-
-
 
     private User findUser(Long id) {
         return userRepository.findById(id).orElseThrow(() ->
